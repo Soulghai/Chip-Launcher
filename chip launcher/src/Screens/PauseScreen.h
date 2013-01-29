@@ -47,7 +47,4 @@
 - (void) update;
 - (void) touchReaction:(CGPoint)_touchPos;
 - (void) ccTouchEnded:(CGPoint)_touchPos;
-- (void) ccTouchMoved:(CGPoint)_touchLocation
-		_prevLocation:(CGPoint)_prevLocation 
-				_diff:(CGPoint)_diff;
 @end

@@ -19,10 +19,10 @@
         cells = [NSMutableArray arrayWithCapacity:6*8];
         [cells retain];
         
-        cellCountX = 4;
-        cellCountY = 5;
-        cellWidth = 128;
-        cellHeight = 128;
+        cellCountX = 21;
+        cellCountY = 31;
+        cellWidth = 16;
+        cellHeight = 16;
         
         cellsHighMap = [NSMutableArray arrayWithObjects:[NSNumber numberWithInt:5000],
                         [NSNumber numberWithInt:15000],
@@ -41,7 +41,7 @@
             for (int j = 0; j < cellCountY; j++) {
                 _spr = [CCSprite spriteWithSpriteFrameName:@"cell_1_1.jpg"];
                 [_spr setAnchorPoint:CGPointZero];
-                [_spr setOpacity:180];
+                [_spr setOpacity:200];
                 [cells addObject:_spr];
             }
         }
@@ -63,6 +63,11 @@
     for (int i = 0; i < cellCurrentFrames.count; i++) {
         [cellCurrentFrames replaceObjectAtIndex:i withObject:[NSNumber numberWithInteger:0]];
     }
+}
+
+- (void) setClearSprite:(CCSprite*)_spr {
+     CCSpriteFrame* _frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"cell_0.jpg"];
+    [_spr setDisplayFrame:_frame];
 }
 
 - (void) manageCells {
@@ -98,6 +103,9 @@
 
 - (void) changeCellSkin:(CCSprite*)_spr
           _currentLevel:(int)_currentLevel{
+    
+    if (!_spr.parent) [[Defs instance].spriteSheetCells addChild:_spr z:0];
+    
     if (_currentLevel > 4) _currentLevel = 4;
     CCSpriteFrame* frame;
     float _ran = CCRANDOM_0_1()*13;
@@ -148,6 +156,23 @@
             }
         }
 	}
+}
+
+-(void) ccTouchMoved:(CGPoint)_touchLocation
+	   _prevLocation:(CGPoint)_prevLocation
+			   _diff:(CGPoint)_diff {
+    
+    CGPoint _touchPos = ccpAdd(_touchLocation, ccp(0,-[Defs instance].objectFrontLayer.position.y));
+    
+	CCSprite *_spr;
+    for (int i = 0; i < cells.count; i++) {
+        _spr = [cells objectAtIndex:i];
+        if ((_touchPos.x > _spr.position.x - cellWidth*0.5f)&&(_touchPos.x < _spr.position.x + cellWidth*0.5f)
+            &&(_touchPos.y < _spr.position.y + cellHeight*0.5f)&&(_touchPos.y > _spr.position.y - cellHeight*0.5f)) {
+            //[self setClearSprite:_spr];
+            if (_spr.parent) [_spr removeFromParentAndCleanup:NO];
+        }
+    }
 }
 
 @end

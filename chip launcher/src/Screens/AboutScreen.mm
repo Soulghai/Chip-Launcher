@@ -344,12 +344,6 @@
 	
 }
 
--(void) ccTouchMoved:(CGPoint)_touchLocation
-	   _prevLocation:(CGPoint)_prevLocation 
-			   _diff:(CGPoint)_diff {	
-	
-}
-
 - (void) dealloc{
 	[super dealloc];
 }

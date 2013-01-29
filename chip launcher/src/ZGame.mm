@@ -22,7 +22,7 @@
 #import "AnalyticsData.h"
 #import "MyData.h"
 #import "ActorCircleBonus.h"
-#import "CellsBackground.h"
+//#import "CellsBackground.h"
 
 @implementation ZGame
 
@@ -232,8 +232,8 @@
         
         startLineYPosition = 240;
         
-        cells = [[CellsBackground alloc] init];
-        [cells retain];
+        //cells = [[CellsBackground alloc] init];
+        //[cells retain];
         
         paralaxBackground = [[ParalaxBackground alloc] init];
         [paralaxBackground retain];
@@ -341,7 +341,7 @@
     timerAddBall = -0.3f;
     
     [self labelScoreBarUpdate];
-    [cells restartParameters];
+    //[cells restartParameters];
     [paralaxBackground restartParameters];
     [heightLabels restartParameters];
     
@@ -611,7 +611,7 @@
         [self setCenterOfTheScreen:player.position];
         
         // делаем апдейт относительно текущей позиции игрока
-        [cells update];
+        //[cells update];
         [paralaxBackground update];
         [heightLabels update];
         // стена скорости, которая действует на персонажа
@@ -643,7 +643,7 @@
             if (scoreStr.parent) [scoreStr removeFromParent];
 		}
 	//}
-    [cells show:_flag];
+    //[cells show:_flag];
     [paralaxBackground show:_flag];
     [heightLabels show:_flag];
     [[Defs instance].actorManager show:_flag];
@@ -667,7 +667,7 @@
         }
     }
 	
-	return NO;
+	return YES;
 }
 
 -(void) ccTouchEnded:(CGPoint)_touchPos {
@@ -678,11 +678,19 @@
 	   _prevLocation:(CGPoint)_prevLocation
 			   _diff:(CGPoint)_diff {
 	
-    if (isPlayerTouch) {
-        [player setPosition:ccpAdd(player.position, _diff)];
-        CCLOG(@"diff %f,%f",_diff.x, _diff.y);
-        CCLOG(@"player %f,%f",player.position.x, player.position.y);
-         CCLOG(@"costume %f,%f",player.costume.position.x, player.costume.position.y);
+    if (state == GAME_STATE_GAMEPREPARE) {
+        if (isPlayerTouch) {
+            [player setPosition:ccpAdd(player.position, _diff)];
+            CCLOG(@"diff %f,%f",_diff.x, _diff.y);
+            CCLOG(@"player %f,%f",player.position.x, player.position.y);
+             CCLOG(@"costume %f,%f",player.costume.position.x, player.costume.position.y);
+        }
+    } else
+    
+    if (state == GAME_STATE_GAME) {
+        if (GAME_IS_PLAYING) {
+            //[cells ccTouchMoved:_touchLocation _prevLocation:_prevLocation _diff:_diff];
+        }
     }
 }
 

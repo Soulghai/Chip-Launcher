@@ -24,5 +24,8 @@
 -(void) restartParameters;
 - (void) update;
 - (void) show:(BOOL)_flag;
+-(void) ccTouchMoved:(CGPoint)_touchLocation
+	   _prevLocation:(CGPoint)_prevLocation
+			   _diff:(CGPoint)_diff;
 
 @end

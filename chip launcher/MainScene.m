@@ -195,6 +195,7 @@ static void MainScene_remover() {
     [pauseScreen load];
 	
 	[[[CCDirector sharedDirector] touchDispatcher]addTargetedDelegate:self priority:0 swallowsTouches:YES];
+  
 	
 	//[_progress removeFromParentAndCleanup:YES];
 	
@@ -326,6 +327,8 @@ static void MainScene_remover() {
         }
 	}
     
+    CCLOG(@"Work!!! - TOUCH");
+    
 	return YES;
 }
 
@@ -339,6 +342,7 @@ static void MainScene_remover() {
     if ((game.state & (GAME_STATE_GAME|GAME_STATE_GAMEPREPARE|GAME_STATE_GAMEPAUSE)) != 0) {
         [game ccTouchEnded:convertedLocation];
     }
+    CCLOG(@"Work!!! - TOUCH ENDED");
 }
 
 -(void) ccTouchCancelled:(UITouch *)touch withEvent:(UIEvent *)event
@@ -362,6 +366,8 @@ static void MainScene_remover() {
     if ((game.state & (GAME_STATE_GAME|GAME_STATE_GAMEPREPARE|GAME_STATE_GAMEPAUSE)) != 0) {
         [game ccTouchMoved:touchLocation _prevLocation:prevLocation _diff:diff];
     }
+    
+    CCLOG(@"Work!!! - MOVE");
 }
 
 #pragma mark GameKit delegate

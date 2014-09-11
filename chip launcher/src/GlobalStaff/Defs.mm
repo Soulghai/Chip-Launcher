@@ -7,6 +7,7 @@
 @synthesize spriteSheetParalax_1;
 @synthesize spriteSheetParalax_2;
 @synthesize spriteSheetChars;
+@synthesize spriteSheetBonuses;
 @synthesize spriteSheetCells;
 @synthesize spriteSheetHeightLabels;
 @synthesize objectBackLayer;

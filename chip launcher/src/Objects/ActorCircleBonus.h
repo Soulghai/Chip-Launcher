@@ -12,6 +12,7 @@
 
 @interface ActorCircleBonus : ActorActiveObject {
     int bonusID;
+    CGPoint startPosition;
 }
 -(id) init:(CCNode*)_parent
    _location:(CGPoint)_location;

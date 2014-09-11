@@ -126,8 +126,18 @@
 	}
 }
 
+- (void) update:(ccTime)dt {
+    if (!isActive) return;
+    
+    costume.position = ccp(startPosition.x+CCRANDOM_0_1()*3, startPosition.y+CCRANDOM_0_1()*3);
+    
+    if (costume.scale > 1.0f) [costume setScale:costume.scale - 0.01f]; else [self eraserCollide];
+	
+	[super update:dt];
+}
+
 - (void) touch {
-    [[MainScene instance].game bonusTouchReaction:bonusID];
+    [[MainScene instance].game bonusTouchReaction:bonusID _scale:costume.scale - 1];
     if (emitterBoom) {
         [emitterBoom resetSystem];
         [emitterBoom stopSystem];
@@ -135,6 +145,22 @@
         emitterBoom = nil;
     }
     [self eraserCollide];
+}
+
+- (void) addToField:(CGPoint)_point
+          _velocity:(CGPoint)_velocity {
+    
+    startPosition = _point;
+    [costume setPosition:startPosition];
+    
+    [costume setScale:2];
+    
+    if (emitterBoom) {
+        [emitterBoom resetSystem];
+        [emitterBoom stopSystem];
+        if (emitterBoom.parent) [emitterBoom removeFromParentAndCleanup:YES];
+        emitterBoom = nil;
+    }
 }
 
 @end

@@ -113,9 +113,14 @@ static void MainScene_remover() {
 	[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"gfx_paralax_2.plist" texture:[Defs instance].spriteSheetParalax_2.texture];
 	[CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA8888];
     
-    [CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA4444];
-    [Defs instance].spriteSheetChars = [CCSpriteBatchNode batchNodeWithFile: @"gfx_chars.pvr.ccz" capacity: 100];
+    //[CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA4444];
+    [Defs instance].spriteSheetChars = [CCSpriteBatchNode batchNodeWithFile: @"gfx_chars.png" capacity: 100];
 	[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"gfx_chars.plist" texture:[Defs instance].spriteSheetChars.texture];
+	[CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA8888];
+    
+    [CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA4444];
+    [Defs instance].spriteSheetBonuses = [CCSpriteBatchNode batchNodeWithFile: @"gfx_bonuses.pvr.ccz" capacity: 100];
+	[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"gfx_bonuses.plist" texture:[Defs instance].spriteSheetBonuses.texture];
 	[CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA8888];
     
     [CCTexture2D setDefaultAlphaPixelFormat:kCCTexture2DPixelFormat_RGBA4444];
@@ -186,6 +191,7 @@ static void MainScene_remover() {
     [[Defs instance].objectFrontLayer addChild:[Defs instance].spriteSheetHeightLabels z:50];
     [[Defs instance].objectFrontLayer addChild:[Defs instance].spriteSheetCells z:100];
     [[Defs instance].objectFrontLayer addChild:[Defs instance].spriteSheetChars z:150];
+    [game addChild:[Defs instance].spriteSheetBonuses z:250];
     [self addChild:levelFinishScreen];
 	[self addChild:pauseScreen];
     [self addChild:marketScreen];

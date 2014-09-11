@@ -86,10 +86,9 @@
     sprGodMode = [CCSprite spriteWithSpriteFrameName:@"playerglow.png"];
     [sprGodMode retain];
     
-    bonusCell = [CCSprite spriteWithSpriteFrameName:@"bonus_apocalypse.png"];
+    bonusCell = [CCSprite spriteWithSpriteFrameName:@"bombfire.png"];
     [bonusCell retain];
-    [bonusCell setPosition:ccp(costume.contentSize.width*0.5f, 20)];
-    [bonusCell setScale:0.7f];
+    [bonusCell setPosition:ccp(costume.contentSize.width*0.5f, costume.contentSize.height*0.5f)];
 }
 
 - (void) setCurrentBodySprite {
@@ -326,7 +325,7 @@
     
     if (velocity.y > [Defs instance].playerSpeedLimit) velocity.y = [Defs instance].playerSpeedLimit;
     
-    if (_value.y > 4) [self setCrazyFace]; else
+    if (_value.y > 10) [self setCrazyFace]; else
         if (_value.y > 0) [self setGoodFace];
 }
 
@@ -416,7 +415,7 @@
     }
     
     if (isBonusSpeed) {
-        costume.position = ccpAdd(ccp(position.x + CCRANDOM_MINUS1_1()*[Defs instance].bonusAccelerationPower*6, position.y + CCRANDOM_MINUS1_1()*[Defs instance].bonusAccelerationPower*6), ccp(dt,dt));
+        costume.position = ccpAdd(ccp(position.x + CCRANDOM_MINUS1_1()*[Defs instance].bonusAccelerationPower, position.y + CCRANDOM_MINUS1_1()*[Defs instance].bonusAccelerationPower), ccp(dt,dt));
         
         if (emitterBonusSpeedFire) {
             if (emitterEngineFire) {
@@ -459,6 +458,8 @@
                 blinkTime = 0;
             }
         }
+    
+    CCLOG(@"vel = %f", velocity.y);
 }
 
 - (CGPoint) magnetReaction:(CGPoint)_point {

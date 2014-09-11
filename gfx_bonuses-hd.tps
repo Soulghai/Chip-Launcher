@@ -38,7 +38,7 @@
         <key>dataFormat</key>
         <string>cocos2d-original</string>
         <key>textureFileName</key>
-        <filename>chip launcher/Resources/SpriteSheets/gfx_chars-hd.png</filename>
+        <filename>chip launcher/Resources/SpriteSheets/gfx_bonuses-hd.pvr.ccz</filename>
         <key>flipPVR</key>
         <false/>
         <key>ditherType</key>
@@ -64,7 +64,7 @@
         <key>textureSubPath</key>
         <string></string>
         <key>textureFormat</key>
-        <enum type="SettingsBase::TextureFormat">png</enum>
+        <enum type="SettingsBase::TextureFormat">pvr2ccz</enum>
         <key>borderPadding</key>
         <uint>2</uint>
         <key>maxTextureSize</key>
@@ -127,7 +127,7 @@
             <enum type="AndEngine::MagFilter">MagLinear</enum>
         </struct>
         <key>dataFileName</key>
-        <filename>chip launcher/Resources/SpriteSheets/gfx_chars-hd.plist</filename>
+        <filename>chip launcher/Resources/SpriteSheets/gfx_bonuses-hd.plist</filename>
         <key>mainExtension</key>
         <string>-hd</string>
         <key>forceIdenticalLayout</key>
@@ -157,9 +157,7 @@
         </struct>
         <key>fileList</key>
         <array>
-            <filename>chip launcher/Resources/gfx/Objects</filename>
-            <filename>../FlyBall/FlyBall/Resources/gfx/Screens/time_screen1.png</filename>
-            <filename>../FlyBall/FlyBall/Resources/gfx/Screens/time_screen2.png</filename>
+            <filename>chip launcher/Resources/gfx/Bonuses</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

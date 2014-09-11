@@ -35,6 +35,9 @@
     GUILabelTTF *labelScoreStr2;
     GUILabelTTF *labelScoreStr3;
     
+    GUIPanel* panelSlowMotionLeft;
+    int panelBonusFadeSpeed;
+    
     CellsBackground *cells;
     ParalaxBackground* paralaxBackground;
     HeightLabels* heightLabels;
@@ -49,9 +52,14 @@
     float delaySlowMotion;
     float timeSlowMotionPause;
     
+    float timerBonusShow;
+    float delayBonusShow;
+    
     float startLineYPosition;
     
     BOOL isPlayerTouch;
+    
+    NSMutableArray* playerMoveArr;
 }
 
 @property (nonatomic, assign) int state;
@@ -72,7 +80,8 @@
 - (void) bonusSlowMotionActivate:(float)_time
                       _timeScale:(float)_timeScale;
 - (void) doBonusEffect:(int)_bonusID;
-- (void) bonusTouchReaction:(int)_bonusID;
+- (void) bonusTouchReaction:(int)_bonusID
+                     _scale:(float)_scale;
 - (BOOL) ccTouchBegan:(CGPoint)_touchPos;
 - (void) ccTouchEnded:(CGPoint)_touchPos;
 - (void) ccTouchMoved:(CGPoint)_touchLocation

@@ -232,6 +232,19 @@
         
         startLineYPosition = 240;
         
+        GUIPanelDef *panelDef = [GUIPanelDef node];
+        panelDef.parentFrame = [Defs instance].spriteSheetChars;
+        panelDef.enabled = NO;
+        panelDef.group = GAME_STATE_NONE;
+        panelDef.sprName = @"time_screen1.png";
+        panelDef.zIndex = 250;
+
+        panelSlowMotionLeft = [[MainScene instance].gui addItem:panelDef _pos:ccp(0,0)];
+        [panelSlowMotionLeft.spr setAnchorPoint:ccp(0, 0)];
+        [panelSlowMotionLeft.spr setScale:2];
+        
+        
+        
         //cells = [[CellsBackground alloc] init];
         //[cells retain];
         
@@ -244,7 +257,7 @@
         player = [[ActorPlayer alloc] init:[Defs instance].spriteSheetChars _location:ccp(screenPlayerPositionX, screenPlayerPositionY)];
         
         for (int i = 0; i < 10; i++)
-            [[ActorCircleBonus alloc] init:[Defs instance].spriteSheetChars _location:CGPointZero];
+            [[ActorCircleBonus alloc] init:[Defs instance].spriteSheetBonuses _location:CGPointZero];
         
         timerDelayAddBall = 0.50f;
         
@@ -253,6 +266,11 @@
         [startPlatform setPosition:ccp(SCREEN_WIDTH_HALF,0)];
         //[startPlatform setScale:2];
         [startPlatform retain];
+        
+        playerMoveArr = [NSMutableArray arrayWithCapacity:20];
+        [playerMoveArr retain];
+        
+        delayBonusShow = 0.9f;
     
     }
 	return (self);
@@ -301,6 +319,17 @@
             break;
         }
     }
+    
+    float _distance = 0;
+    float _x;
+    float _y;
+    while (_distance < elementSize*3) {
+        _x = CCRANDOM_0_1()*(SCREEN_WIDTH - 100);
+        _y = CCRANDOM_0_1()*(SCREEN_HEIGHT - 100);
+        _distance = [[Utils instance] distance:player.position.x _y1:player.position.y _x2:_x + 50 _y2:_y + 50];
+    }
+    
+    _point = CGPointMake(_x + 50, _y + 50);
     
     if (_circleBombBonus != nil)
         [_circleBombBonus addToField:_point _velocity:_velocity];
@@ -354,6 +383,8 @@
     
     ++[Defs instance].gameSessionCounter;
     
+    [playerMoveArr removeAllObjects];
+    
     [FlurryAnalytics logEvent:ANALYTICS_GAME_LEVEL_START];
 }
 
@@ -361,6 +392,9 @@
     GAME_IS_PLAYING = YES;
     state = GAME_STATE_GAME;
     [[MainScene instance].gui show:state];
+    
+    timerBonusShow = 0;
+    
     //[player addVelocity:firstBomb.velocity];
 }
 
@@ -463,14 +497,47 @@
     [labelScoreStr3 setText:_strScoreValue];
 }
 
+- (void) bonusAddFrame:(float)_time
+              _bonusID:(int)_bonusID{
+    [panelSlowMotionLeft show:YES];
+    [panelSlowMotionLeft.spr setOpacity:200];
+    [panelSlowMotionLeft.spr setPosition:ccp(-[Defs instance].objectFrontLayer.position.x, -[Defs instance].objectFrontLayer.position.y)];
+    
+    panelBonusFadeSpeed = int(255 / (FRAME_RATE*_time));
+    
+    switch (_bonusID) {
+        case BONUS_SLOWMOTION: {
+            CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"time_screen1.png"];
+            [panelSlowMotionLeft.spr setDisplayFrame:frame];
+        }
+            break;
+        case BONUS_ACCELERATION: {
+            CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"time_screen1.png"];
+            [panelSlowMotionLeft.spr setDisplayFrame:frame];
+        }
+            break;
+        case BONUS_GODMODE: {
+            CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"time_screen1.png"];
+            [panelSlowMotionLeft.spr setDisplayFrame:frame];
+        }
+            break;
+            
+        case BONUS_APOCALYPSE: {
+            CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"time_screen2.png"];
+            [panelSlowMotionLeft.spr setDisplayFrame:frame];
+        }
+            break;
+            
+    }
+}
+
 - (void) doBonusEffect:(int)_bonusID {
     switch (_bonusID) {
         case BONUS_SLOWMOTION:
-
+            
             break;
             
         case BONUS_ACCELERATION:
-
             break;
             
         case BONUS_APOCALYPSE:
@@ -491,7 +558,8 @@
     [[[CCDirector sharedDirector] scheduler] setTimeScale:_timeScale];
 }
 
-- (void) bonusTouchReaction:(int)_bonusID {
+- (void) bonusTouchReaction:(int)_bonusID
+                     _scale:(float)_scale {
     switch (_bonusID) {
         case BONUS_COINS:
             // Добавляем одну монетку
@@ -500,22 +568,28 @@
             
         case BONUS_SLOWMOTION:
             // Включаем замедление времени
-            [self bonusSlowMotionActivate:[Defs instance].playerBombSlow _timeScale:0.5f];
+            [self bonusSlowMotionActivate:[Defs instance].playerBombSlow*_scale _timeScale:0.5f];
+            [self bonusAddFrame:[Defs instance].playerBombSlow*_scale _bonusID:_bonusID];
             break;
             
         case BONUS_ACCELERATION:
             // Ускорение
-            [player setSpeedBonus:[Defs instance].bonusAccelerationDelay];
+            [player setSpeedBonus:[Defs instance].bonusAccelerationDelay*_scale];
+            [self bonusAddFrame:[Defs instance].bonusAccelerationDelay*_scale _bonusID:_bonusID];
             break;
             
         case BONUS_APOCALYPSE:
             // Апокалипсис
-            [player setBonusCell:BONUS_APOCALYPSE];
+            //[player setBonusCell:BONUS_APOCALYPSE];
+            [player addVelocity:ccp(0, 40*_scale)];
+            [self bonusAddFrame:0.3f _bonusID:_bonusID];
             break;
             
         case BONUS_GODMODE:
             // устанавливаем режим бога
-            [player setGodMode:[Defs instance].bonusGodModeTime];
+            [player setGodMode:[Defs instance].bonusGodModeTime*_scale];
+            [player addVelocity:ccp(0, 40*_scale)];
+            [self bonusAddFrame:[Defs instance].bonusGodModeTime*_scale _bonusID:_bonusID];
             break;
     }
 }
@@ -607,6 +681,12 @@
             [scoreStr setString:[NSString stringWithFormat:@"%i",scoreLevel]];
         }
         
+        timerBonusShow += TIME_STEP;
+        if (timerBonusShow >= delayBonusShow) {
+            [self addBonus:0 _point:CGPointZero _velocity:CGPointZero _active:YES];
+            timerBonusShow = 0;
+        }
+        
         [[Defs instance].actorManager update:delta];
         [self setCenterOfTheScreen:player.position];
         
@@ -615,15 +695,24 @@
         [paralaxBackground update];
         [heightLabels update];
         // стена скорости, которая действует на персонажа
+        
+        if (panelSlowMotionLeft.spr.opacity >= panelBonusFadeSpeed) {
+            [panelSlowMotionLeft.spr setOpacity:panelSlowMotionLeft.spr.opacity - panelBonusFadeSpeed];
+            [panelSlowMotionLeft.spr setPosition:ccp(-[Defs instance].objectFrontLayer.position.x, -[Defs instance].objectFrontLayer.position.y)];
+        }
+        else {
+            [panelSlowMotionLeft show:NO];
+        }
     } else
         if (state == GAME_STATE_GAMEPREPARE) {
             //[firstBomb update:delta];
             //firstBomb.costume.position = ccp(screenPlayerPositionX + CCRANDOM_MINUS1_1()*2, (screenPlayerPositionY - 90) + CCRANDOM_MINUS1_1()*2);
-            [player updateLaunch:delta _isTouch:isPlayerTouch];
             
             if (player.position.y > startLineYPosition) {
                 [self startGameSession];
+                return;
             }
+            [player updateLaunch:delta _isTouch:isPlayerTouch];
         }
 
 }
@@ -654,7 +743,20 @@
 			
 		if (state != GAME_STATE_LEVELFINISH) {
 			if (GAME_IS_PLAYING) {
-                  
+                
+                Actor *_tempActor;
+                float _distanceToActor;
+                float _minDistance = elementSize;
+                int _count = [[Defs instance].actorManager.actorsAll count];
+                for (int i = 0; i < _count; i++) {
+                    _tempActor = [[Defs instance].actorManager.actorsAll objectAtIndex:i];
+                    if ((_tempActor.isActive)&&(player.itemID != _tempActor.itemID)&&([_tempActor isKindOfClass:[ActorCircleBonus class]])) {
+                        _distanceToActor = [[Utils instance] distance:_tempActor.costume.position.x _y1:_tempActor.costume.position.y _x2:_touchPos.x _y2:_touchPos.y];
+                        if (_distanceToActor < _minDistance) {
+                            [(ActorCircleBonus*)_tempActor touch];
+                        }
+                    }
+                }
                                 
 			}
             if (state == GAME_STATE_GAMEPREPARE) {
@@ -667,7 +769,7 @@
         }
     }
 	
-	return YES;
+	return NO;
 }
 
 -(void) ccTouchEnded:(CGPoint)_touchPos {
@@ -684,6 +786,8 @@
             CCLOG(@"diff %f,%f",_diff.x, _diff.y);
             CCLOG(@"player %f,%f",player.position.x, player.position.y);
              CCLOG(@"costume %f,%f",player.costume.position.x, player.costume.position.y);
+            
+            [playerMoveArr insertObject:[NSValue valueWithCGPoint:player.position] atIndex:0];
         }
     } else
     
